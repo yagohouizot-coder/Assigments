@@ -33,5 +33,11 @@ class WorldSystem {
 
 		std::default_random_engine m_random_engine;
 		std::uniform_real_distribution<float> m_uniform_distribution;
+
+		// Creations of movement control booleans
+		bool w_pressed = false;
+		bool a_pressed = false;
+		bool s_pressed = false;
+		bool d_pressed = false;
 };
 

@@ -39,6 +39,37 @@ void WorldSystem::step(const float delta) noexcept {
 	std::string title = fmt::format("Score: {} - FPS: {:.2f} ({:.2f} ms)", m_score, 1/delta, 1000 * delta);
 	m_window->setTitle(title.c_str());
 
+	const float PLAYER_SPEED = 0.3F;
+	const float DECELERATION = 0.5F;
+
+	glm::vec2& player_velocity = m_registry->m_velocities.get(m_registry->player());
+
+	if( w_pressed ) {
+		player_velocity.y = PLAYER_SPEED;
+	} else if( s_pressed ) {
+		player_velocity.y = -PLAYER_SPEED;
+	} else {
+		// Deceleration implementation for vertical movement 
+		if( player_velocity.y > 0 ) {
+			player_velocity.y = std::max(0.f, player_velocity.y - DECELERATION * delta);
+		} else if( player_velocity.y < 0 ) {
+			player_velocity.y = std::min(0.f, player_velocity.y + DECELERATION * delta);
+		}
+	}
+
+	if( d_pressed ) {
+		player_velocity.x = PLAYER_SPEED;
+	} else if( a_pressed ) {
+		player_velocity.x = -PLAYER_SPEED;
+	} else {
+		// Deceleration implementation for horizontal movement 
+		if( player_velocity.x > 0 ) {
+			player_velocity.x = std::max(0.f, player_velocity.x - DECELERATION * delta);
+		} else if( player_velocity.x < 0 ) {
+			player_velocity.x = std::min(0.f, player_velocity.x + DECELERATION * delta);
+		}
+	}
+
 	// remove entites that leave the screen on the bottom side
 	for (Entity e : m_registry->m_velocities.entities) {
 		glm::vec2 position = m_registry->m_positions.get(e);
@@ -86,23 +117,32 @@ void WorldSystem::onKeyCallback(GLFWwindow* /* window */, int key, int /* scanco
 					break;
 				// (A2) Handle player movement here
 				case GLFW_KEY_W:
-					m_registry->m_velocities.get(m_registry->player()).y = 0.5f;
+					w_pressed = true;
+					s_pressed = a_pressed = d_pressed = false;
 					break;
 				case GLFW_KEY_S:
-					m_registry->m_velocities.get(m_registry->player()).y = -0.5f;
+					s_pressed = true;
+					w_pressed = a_pressed = d_pressed = false;
 					break;
 				case GLFW_KEY_A:
-					m_registry->m_velocities.get(m_registry->player()).x = -0.5f;
+					a_pressed = true;
+					w_pressed = s_pressed = d_pressed = false;
 					break;
 				case GLFW_KEY_D:
-					m_registry->m_velocities.get(m_registry->player()).x = 0.5f;
+					d_pressed = true;
+					w_pressed = s_pressed = a_pressed = false;
 					break; 
 				default:
 					break;
 			}
 			break;
 		case GLFW_RELEASE:
-			{} break;
+			{
+				if (key == GLFW_KEY_W) w_pressed = false;
+				if (key == GLFW_KEY_S) s_pressed = false;
+				if (key == GLFW_KEY_A) a_pressed = false;
+				if (key == GLFW_KEY_D) d_pressed = false;
+			} break;
 		case GLFW_REPEAT:
 		default:
 			break;
