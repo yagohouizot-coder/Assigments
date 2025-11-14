@@ -60,7 +60,8 @@ void WorldSystem::step(const float delta) noexcept {
 
 	if (m_registry->m_bugs.entities.size() <= MAX_BUGS
 			&& (m_bug_timer -= delta) <= 0) {
-		// TODO: (A2) Create a new bug using `createBug(m_registry, {0.5, 1})`.
+		// (A2) Create a new bug using `createBug(m_registry, {0.5, 1})`.
+		createBug(m_registry, {m_uniform_distribution(m_random_engine), 1.99f});
 		m_bug_timer = BUG_DELAY;
 	}
 
@@ -83,7 +84,19 @@ void WorldSystem::onKeyCallback(GLFWwindow* /* window */, int key, int /* scanco
 				case GLFW_KEY_R: // pressing the 'r' key triggers a reset of the game
 					m_reset = true;
 					break;
-				// TODO: (A2) Handle player movement here
+				// (A2) Handle player movement here
+				case GLFW_KEY_W:
+					m_registry->m_velocities.get(m_registry->player()).y = 0.5f;
+					break;
+				case GLFW_KEY_S:
+					m_registry->m_velocities.get(m_registry->player()).y = -0.5f;
+					break;
+				case GLFW_KEY_A:
+					m_registry->m_velocities.get(m_registry->player()).x = -0.5f;
+					break;
+				case GLFW_KEY_D:
+					m_registry->m_velocities.get(m_registry->player()).x = 0.5f;
+					break; 
 				default:
 					break;
 			}
