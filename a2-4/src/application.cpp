@@ -120,6 +120,8 @@ void Application::reset() noexcept {
 	m_registry->m_angles.emplace(m_registry->player(), 0.f);
 	m_registry->m_collision_radius.emplace(m_registry->player(), 0.1f);
 
+	
+
 	m_registry->screenDarkness() = 1.f;
 
 	// reset systems

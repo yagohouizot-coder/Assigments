@@ -31,9 +31,14 @@ EatOrBeEaten eatOrBeEaten(Registry* registry, const Entity first, const Entity s
 
 void PhysicsSystem::step(const float /*delta*/) noexcept {
 	// TODO: (A2) Update the angle of the player based on the current cursor position here.
+	
 	for (Entity e : m_registry->m_velocities.entities) {
 		(void)e;
-		// TODO: (A2) Handle updates to position here.
+		// (A2) Handle updates to position here.
+		glm::vec2 position = m_registry->m_positions.get(e);
+		glm::vec2 velocity = m_registry->m_velocities.get(e);
+		position += velocity * 0.016f;
+		m_registry->m_positions.get(e) = position;
 	}
 
 	m_collisions.clear();
@@ -73,7 +78,29 @@ void PhysicsSystem::handleCollisions(const float /*delta*/) noexcept {
 			case EatOrBeEaten::eaten:
 				{
 					ma_sound_start(m_audio_engine->deadSound());
-					// TODO: (A2) Change the color and orientation of the chicken on death
+					// (A2) Change the color and orientation of the chicken on death
+
+					// Changing color
+					if( m_registry->m_colors.has(m_registry->player()) ) {
+						m_registry->m_colors.get(m_registry->player()) = glm::vec3(0.8f, 0.2f, 0.2f);
+					} else { // if no color yet, we add one
+						m_registry->m_colors.emplace(m_registry->player(), glm::vec3(0.8f, 0.2f, 0.2f));
+					}
+
+					// Changing orientation
+					if( m_registry->m_angles.has(m_registry->player()) ) {
+						m_registry->m_angles.get(m_registry->player()) += 180.f; // facing dowwards
+					} else { 
+						m_registry->m_angles.emplace(m_registry->player(), 180.f);
+					}
+
+					// Sinking the chicken
+					if( m_registry->m_velocities.has(m_registry->player()) ) {
+						m_registry->m_velocities.get(m_registry->player()) = glm::vec2(0.f, -0.5f);
+					} else {
+						m_registry->m_velocities.emplace(m_registry->player(), glm::vec2(0.f, -0.5f));
+					}
+
 				} break;
 			case EatOrBeEaten::neither:
 				break;

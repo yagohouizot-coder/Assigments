@@ -42,68 +42,74 @@ void WorldSystem::step(const float delta) noexcept {
 	const float PLAYER_SPEED = 0.3F;
 	const float DECELERATION = 0.5F;
 
+	bool is_dead = m_registry->m_death_timers.has(m_registry->player());
+
 	glm::vec2& player_velocity = m_registry->m_velocities.get(m_registry->player());
+	if(!is_dead){
+		if( w_pressed ) {
+			player_velocity.y = PLAYER_SPEED;
+		} else if( s_pressed ) {
+			player_velocity.y = -PLAYER_SPEED;
+		} else {
+			// Deceleration implementation for vertical movement 
+			if( player_velocity.y > 0 ) {
+				player_velocity.y = std::max(0.f, player_velocity.y - DECELERATION * delta);
+			} else if( player_velocity.y < 0 ) {
+				player_velocity.y = std::min(0.f, player_velocity.y + DECELERATION * delta);
+			}
+		}
 
-	if( w_pressed ) {
-		player_velocity.y = PLAYER_SPEED;
-	} else if( s_pressed ) {
-		player_velocity.y = -PLAYER_SPEED;
-	} else {
-		// Deceleration implementation for vertical movement 
-		if( player_velocity.y > 0 ) {
-			player_velocity.y = std::max(0.f, player_velocity.y - DECELERATION * delta);
-		} else if( player_velocity.y < 0 ) {
-			player_velocity.y = std::min(0.f, player_velocity.y + DECELERATION * delta);
+		if( d_pressed ) {
+			player_velocity.x = PLAYER_SPEED;
+		} else if( a_pressed ) {
+			player_velocity.x = -PLAYER_SPEED;
+		} else {
+			// Deceleration implementation for horizontal movement 
+			if( player_velocity.x > 0 ) {
+				player_velocity.x = std::max(0.f, player_velocity.x - DECELERATION * delta);
+			} else if( player_velocity.x < 0 ) {
+				player_velocity.x = std::min(0.f, player_velocity.x + DECELERATION * delta);
+			}
 		}
 	}
 
-	if( d_pressed ) {
-		player_velocity.x = PLAYER_SPEED;
-	} else if( a_pressed ) {
-		player_velocity.x = -PLAYER_SPEED;
-	} else {
-		// Deceleration implementation for horizontal movement 
-		if( player_velocity.x > 0 ) {
-			player_velocity.x = std::max(0.f, player_velocity.x - DECELERATION * delta);
-		} else if( player_velocity.x < 0 ) {
-			player_velocity.x = std::min(0.f, player_velocity.x + DECELERATION * delta);
+		// remove entites that leave the screen on the bottom side
+		for (Entity e : m_registry->m_velocities.entities) {
+			glm::vec2 position = m_registry->m_positions.get(e);
+			glm::vec2 scale = glm::vec2(0);
+			if (m_registry->m_scales.has(e))
+				scale = m_registry->m_scales.get(e);
+			else if (m_registry->m_collision_radius.has(e))
+				scale = glm::vec2(m_registry->m_collision_radius.get(e));
+			if (!m_registry->m_players.has(e) && position.y + fabs(scale.x/2) < -1) {
+				m_registry->clear(e);
+			}
 		}
-	}
 
-	// remove entites that leave the screen on the bottom side
-	for (Entity e : m_registry->m_velocities.entities) {
-		glm::vec2 position = m_registry->m_positions.get(e);
-		glm::vec2 scale = glm::vec2(0);
-		if (m_registry->m_scales.has(e))
-			scale = m_registry->m_scales.get(e);
-		else if (m_registry->m_collision_radius.has(e))
-			scale = glm::vec2(m_registry->m_collision_radius.get(e));
-		if (!m_registry->m_players.has(e) && position.y + fabs(scale.x/2) < -1) {
-			m_registry->clear(e);
+		if (m_registry->m_eagles.entities.size() <= MAX_EAGLES
+				&& (m_eagle_timer -= delta) <= 0) {
+			createEagle(m_registry, {1.f - m_uniform_distribution(m_random_engine), 1.99f});
+			m_eagle_timer = (EAGLE_DELAY/2) + m_uniform_distribution(m_random_engine) * (EAGLE_DELAY/2);
 		}
-	}
 
-	if (m_registry->m_eagles.entities.size() <= MAX_EAGLES
-			&& (m_eagle_timer -= delta) <= 0) {
-		createEagle(m_registry, {1.f - m_uniform_distribution(m_random_engine), 1.99f});
-		m_eagle_timer = (EAGLE_DELAY/2) + m_uniform_distribution(m_random_engine) * (EAGLE_DELAY/2);
-	}
-
-	if (m_registry->m_bugs.entities.size() <= MAX_BUGS
-			&& (m_bug_timer -= delta) <= 0) {
-		// (A2) Create a new bug using `createBug(m_registry, {0.5, 1})`.
-		createBug(m_registry, {m_uniform_distribution(m_random_engine), 1.99f});
-		m_bug_timer = BUG_DELAY;
-	}
-
-	if (m_registry->m_death_timers.has(m_registry->player())) {
-		float& timer = m_registry->m_death_timers.get(m_registry->player());
-		timer -= delta;
-		if (timer < 0) {
-			m_reset = true;
+		if (m_registry->m_bugs.entities.size() <= MAX_BUGS
+				&& (m_bug_timer -= delta) <= 0) {
+			// (A2) Create a new bug using `createBug(m_registry, {0.5, 1})`.
+			createBug(m_registry, {m_uniform_distribution(m_random_engine), 1.99f});
+			m_bug_timer = BUG_DELAY;
 		}
-	}
 
+		if (m_registry->m_death_timers.has(m_registry->player())) {
+			float& timer = m_registry->m_death_timers.get(m_registry->player());
+			timer -= delta;
+			if (timer < 0) {
+				m_reset = true;
+			}
+		}
+
+		
+	
+	
 	// TODO: (A2) Update the `LightUp` timer and remove it if it drops below 0.
 	//            See the death timer above for an example. 
 }

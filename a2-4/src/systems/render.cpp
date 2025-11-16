@@ -85,18 +85,32 @@ void RenderSystem::step(const float) noexcept {
 
 		glm::vec2 position = m_registry->m_positions.get(m_registry->player());
 		glm::vec2 scale = m_registry->m_scales.get(m_registry->player());
+		// Added angle retrieval
+		float angle = m_registry->m_angles.get(m_registry->player());
 
-		glm::mat4 model = glm::identity<glm::mat4>();
-		model = glm::translate(model, glm::vec3(position, 0));
-		model = glm::scale(model, glm::vec3(scale, 1));
+
 		// TODO: (A2) Add rotation to the chain of transformations.
 		//            Keep the effect the order of transformations has in mind.
+		//			  Which is translate -> rotate -> scale
+		glm::mat4 model = glm::identity<glm::mat4>();
+		model = glm::translate(model, glm::vec3(position, 0));
+		model = glm::rotate(model, glm::radians(angle), glm::vec3(0, 0, 1));
+		model = glm::scale(model, glm::vec3(scale, 1));
+		
+		
+
+		// Adding a color variable
+		glm::vec3 fcolor = glm::vec3(1.0f, 1.0f, 1.0f);
+		if( m_registry->m_colors.has(m_registry->player()) ) {
+			fcolor = m_registry->m_colors.get(m_registry->player());
+		}
 
 		chicken_shader.use()
 			.setMat4("model", model)
 			.setMat4("view", view)
 			.setMat4("projection", projection)
-			.setVec3("fcolor", {1, 1, 1});
+			.setVec3("fcolor", fcolor); // change of {1,1,1} to fcolor to be ablke to be changed 
+			
 		// TODO: (A2) Implement a `setBool` member function for the Shader class using `glUniform1i`.
 		//            Use this function to set the `light_up` uniform to the appropriate value.
 		chicken_mesh.bind();
