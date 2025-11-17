@@ -107,6 +107,15 @@ void WorldSystem::step(const float delta) noexcept {
 			}
 		}
 
+		// Update the LightUp timer as the death one
+		if (m_registry->m_light_up.has(m_registry->player())) {
+			float& timer = m_registry->m_light_up.get(m_registry->player());
+			timer -= delta;
+			if (timer < 0) {
+				m_registry->m_light_up.remove(m_registry->player());
+			}
+		}
+
 		
 	
 	

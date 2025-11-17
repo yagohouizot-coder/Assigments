@@ -105,11 +105,14 @@ void RenderSystem::step(const float) noexcept {
 			fcolor = m_registry->m_colors.get(m_registry->player());
 		}
 
+		bool light_up = m_registry->m_light_up.has(m_registry->player());
+
 		chicken_shader.use()
 			.setMat4("model", model)
 			.setMat4("view", view)
 			.setMat4("projection", projection)
-			.setVec3("fcolor", fcolor); // change of {1,1,1} to fcolor to be ablke to be changed 
+			.setVec3("fcolor", fcolor) // change of {1,1,1} to fcolor to be ablke to be changed 
+			.setBool("light_up", light_up);
 			
 		// TODO: (A2) Implement a `setBool` member function for the Shader class using `glUniform1i`.
 		//            Use this function to set the `light_up` uniform to the appropriate value.

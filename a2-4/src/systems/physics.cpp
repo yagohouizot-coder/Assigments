@@ -73,7 +73,8 @@ void PhysicsSystem::handleCollisions(const float /*delta*/) noexcept {
 			case EatOrBeEaten::eat:
 				{
 					ma_sound_start(m_audio_engine->eatSound());
-					// TODO: (A2) Create a new `LightUp` component in application.h and add an instance to the chicken here.
+					// (A2) Create a new `LightUp` component in registry.h and add an instance to the chicken here.
+					m_registry->m_light_up.emplace(m_registry->player(), 2.0f);
 				} break;
 			case EatOrBeEaten::eaten:
 				{

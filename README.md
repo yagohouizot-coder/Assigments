@@ -2,7 +2,7 @@
 
 ## Assignment 1
 ## Assignment 2
-    -   Change in render.cpp of {1,1,1} to be able to vary the color of the chicken during the game
+    -   When the chicken eats a bug it lights up but really little...
     -   I've added the chicken momentum feature. When the user unpresses the movement button, it slows at a speed of DECELERATION delta times per second.
 
   # Questions

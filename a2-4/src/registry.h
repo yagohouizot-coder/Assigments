@@ -31,6 +31,10 @@ class Registry {
 
 		ComponentContainer<glm::vec3> m_colors;
 
+		// Adding light up component
+
+		ComponentContainer<float> m_light_up;
+
 		inline Entity player() noexcept { return m_player; }
 		inline float& screenDarkness() noexcept { return m_screen_darkness; }
 

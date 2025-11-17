@@ -33,6 +33,10 @@ class Shader {
 			glUniform1f(glGetUniformLocation(m_handle, name), value);
 			return *this;
 		}
+		inline const Shader& setBool(const char* name, const bool value) const noexcept {
+			glUniform1i(glGetUniformLocation(m_handle, name), static_cast<GLint>(value));
+			return *this;
+		}
 
 	private:
 		uint32_t m_handle;
