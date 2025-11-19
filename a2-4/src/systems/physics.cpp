@@ -44,18 +44,18 @@ void PhysicsSystem::step(const float /*delta*/) noexcept {
 
 		worldx = cursor_pos.x / window_dim.x;
 		// the height is 2 and width is 1, so we need to scale each one accordingly, and the y axis also invert it 
-		worldy = 2.f -  2.f * (cursor_pos.y / window_dim.y); 
-		
+		worldy = 2.f  - cursor_pos.y / window_dim.y * 2.f; 
 
 		glm::vec2 mapped_pos = glm::vec2(worldx, worldy);
 
-		glm::vec2 direction = mapped_pos - player_pos;
+		glm::vec2 direction = mapped_pos - player_pos;		
 
 		// Now we can calculate the angle between the player and the cursor
 
-		float angle = std::atan2( direction.x ,direction.y ); 
+		float angle = std::atan2( direction.y ,direction.x ); 
 		
-		m_registry->m_angles.get(m_registry->player()) = glm::degrees(angle) + 90.f; // we add 90 degrees to make the chicken face the cursor
+		m_registry->m_angles.get(m_registry->player()) = glm::degrees(angle); // we add 90 degrees to make the chicken face the cursor
+		//fmt::print("Angle: {}\n", glm::degrees(angle) - 90.f);
 	}
 	for (Entity e : m_registry->m_velocities.entities) {
 		(void)e;
