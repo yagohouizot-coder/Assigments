@@ -89,7 +89,7 @@ void RenderSystem::step(const float) noexcept {
 		float angle = m_registry->m_angles.get(m_registry->player());
 
 
-		// TODO: (A2) Add rotation to the chain of transformations.
+		// (A2) Add rotation to the chain of transformations.
 		//            Keep the effect the order of transformations has in mind.
 		//			  Which is translate -> rotate -> scale
 		glm::mat4 model = glm::identity<glm::mat4>();
