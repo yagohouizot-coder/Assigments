@@ -31,7 +31,7 @@ EatOrBeEaten eatOrBeEaten(Registry* registry, const Entity first, const Entity s
 
 void PhysicsSystem::step(const float /*delta*/) noexcept {
 	// TODO: (A2) Update the angle of the player based on the current cursor position here.
-	
+
 	for (Entity e : m_registry->m_velocities.entities) {
 		(void)e;
 		// (A2) Handle updates to position here.

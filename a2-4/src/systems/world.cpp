@@ -50,26 +50,34 @@ void WorldSystem::step(const float delta) noexcept {
 			player_velocity.y = PLAYER_SPEED;
 		} else if( s_pressed ) {
 			player_velocity.y = -PLAYER_SPEED;
-		} else {
+		} else{
 			// Deceleration implementation for vertical movement 
-			if( player_velocity.y > 0 ) {
-				player_velocity.y = std::max(0.f, player_velocity.y - DECELERATION * delta);
-			} else if( player_velocity.y < 0 ) {
-				player_velocity.y = std::min(0.f, player_velocity.y + DECELERATION * delta);
+			if(f4_pressed){
+				if( player_velocity.y > 0 ) {
+					player_velocity.y = std::max(0.f, player_velocity.y - DECELERATION * delta);
+				} else if( player_velocity.y < 0 ) {
+					player_velocity.y = std::min(0.f, player_velocity.y + DECELERATION * delta);
+				}
+			} else {
+				player_velocity.y = 0.f;
 			}
-		}
-
+			
+		} 
+ 
 		if( d_pressed ) {
 			player_velocity.x = PLAYER_SPEED;
 		} else if( a_pressed ) {
 			player_velocity.x = -PLAYER_SPEED;
 		} else {
 			// Deceleration implementation for horizontal movement 
-			if( player_velocity.x > 0 ) {
-				player_velocity.x = std::max(0.f, player_velocity.x - DECELERATION * delta);
-			} else if( player_velocity.x < 0 ) {
-				player_velocity.x = std::min(0.f, player_velocity.x + DECELERATION * delta);
+			if(f4_pressed){
+				if( player_velocity.x > 0 ) {
+					player_velocity.x = std::max(0.f, player_velocity.x - DECELERATION * delta);
+				} else if( player_velocity.x < 0 ) {
+					player_velocity.x = std::min(0.f, player_velocity.x + DECELERATION * delta);
+				}
 			}
+			
 		}
 	}
 
@@ -106,8 +114,9 @@ void WorldSystem::step(const float delta) noexcept {
 				m_reset = true;
 			}
 		}
+		// (A2) Update the `LightUp` timer and remove it if it drops below 0.
+		//            See the death timer above for an example. 
 
-		// Update the LightUp timer as the death one
 		if (m_registry->m_light_up.has(m_registry->player())) {
 			float& timer = m_registry->m_light_up.get(m_registry->player());
 			timer -= delta;
@@ -119,8 +128,7 @@ void WorldSystem::step(const float delta) noexcept {
 		
 	
 	
-	// TODO: (A2) Update the `LightUp` timer and remove it if it drops below 0.
-	//            See the death timer above for an example. 
+	
 }
 
 void WorldSystem::onKeyCallback(GLFWwindow* /* window */, int key, int /* scancode */, int action, int /* mods */) noexcept {
@@ -133,20 +141,22 @@ void WorldSystem::onKeyCallback(GLFWwindow* /* window */, int key, int /* scanco
 				// (A2) Handle player movement here
 				case GLFW_KEY_W:
 					w_pressed = true;
-					s_pressed = a_pressed = d_pressed = false;
 					break;
 				case GLFW_KEY_S:
 					s_pressed = true;
-					w_pressed = a_pressed = d_pressed = false;
 					break;
 				case GLFW_KEY_A:
 					a_pressed = true;
-					w_pressed = s_pressed = d_pressed = false;
 					break;
 				case GLFW_KEY_D:
 					d_pressed = true;
-					w_pressed = s_pressed = a_pressed = false;
 					break; 
+				case GLFW_KEY_F4:
+					// Source - https://stackoverflow.com/a
+					// Posted by ILMTitan
+					// Retrieved 2025-11-19, License - CC BY-SA 2.5
+					f4_pressed ^= true;
+
 				default:
 					break;
 			}

@@ -114,7 +114,7 @@ void RenderSystem::step(const float) noexcept {
 			.setVec3("fcolor", fcolor) // change of {1,1,1} to fcolor to be ablke to be changed 
 			.setBool("light_up", light_up);
 			
-		// TODO: (A2) Implement a `setBool` member function for the Shader class using `glUniform1i`.
+		// (A2) Implement a `setBool` member function for the Shader class using `glUniform1i`.
 		//            Use this function to set the `light_up` uniform to the appropriate value.
 		chicken_mesh.bind();
 
