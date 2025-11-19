@@ -1,10 +1,11 @@
 #include "physics.h"
 #include <algorithm>
 
-PhysicsSystem PhysicsSystem::init(Registry* registry, AudioSystem* audio_engine) noexcept {
+PhysicsSystem PhysicsSystem::init(Registry* registry, AudioSystem* audio_engine, Window* window) noexcept {
 	PhysicsSystem self;
 	self.m_registry = registry;
 	self.m_audio_engine = audio_engine;
+	self.m_window = window;
 	return self;
 }
 
@@ -31,7 +32,31 @@ EatOrBeEaten eatOrBeEaten(Registry* registry, const Entity first, const Entity s
 
 void PhysicsSystem::step(const float /*delta*/) noexcept {
 	// TODO: (A2) Update the angle of the player based on the current cursor position here.
+	// Not well implemented... doesnt work
 
+	if(m_registry->m_players.has(m_registry->player())){
+
+		float worldx, worldy;
+
+		glm::vec2 player_pos = m_registry-> m_positions.get(m_registry->player());
+		glm::vec2 cursor_pos = m_window->cursorPosition(); // we get cursor position
+		glm::vec2 window_dim = glm::vec2(m_window->windowExtent()); 	// we get dimensions of window
+
+		worldx = cursor_pos.x / window_dim.x;
+		// the height is 2 and width is 1, so we need to scale each one accordingly, and the y axis also invert it 
+		worldy = 2.f -  2.f * (cursor_pos.y / window_dim.y); 
+		
+
+		glm::vec2 mapped_pos = glm::vec2(worldx, worldy);
+
+		glm::vec2 direction = mapped_pos - player_pos;
+
+		// Now we can calculate the angle between the player and the cursor
+
+		float angle = std::atan2( direction.x ,direction.y ); 
+		
+		m_registry->m_angles.get(m_registry->player()) = glm::degrees(angle) + 90.f; // we add 90 degrees to make the chicken face the cursor
+	}
 	for (Entity e : m_registry->m_velocities.entities) {
 		(void)e;
 		// (A2) Handle updates to position here.

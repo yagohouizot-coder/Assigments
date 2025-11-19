@@ -53,10 +53,11 @@ std::optional<Application> Application::init(const CommandLineOptions& options) 
 	self.m_audio_engine = new AudioSystem;
 	*self.m_audio_engine = AudioSystem::init();
 
+
 	self.m_registry = Registry::init();
 
 	self.m_world = WorldSystem::init(self.m_window, self.m_registry, self.m_audio_engine);
-	self.m_physics = PhysicsSystem::init(self.m_registry, self.m_audio_engine);
+	self.m_physics = PhysicsSystem::init(self.m_registry, self.m_audio_engine, self.m_window); // changed the init call to include window
 	self.m_render = RenderSystem::init(self.m_window, self.m_registry);
 
 	return self;

@@ -3,10 +3,11 @@
 #include <common.h>
 #include <registry.h>
 #include <systems/audio.h>
+#include <window.h>
 
 class PhysicsSystem {
 	public:
-		static PhysicsSystem init(Registry* registry, AudioSystem* audio_engine) noexcept;
+		static PhysicsSystem init(Registry* registry, AudioSystem* audio_engine, Window* window) noexcept;
 		void deinit() noexcept;
 
 		void step(const float delta) noexcept;
@@ -16,6 +17,7 @@ class PhysicsSystem {
 	private:
 		Registry* m_registry;
 		AudioSystem* m_audio_engine;
+		Window* m_window;
 
 		struct Collision {
 			Entity m_first; Entity m_second;
