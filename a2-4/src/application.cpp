@@ -1,5 +1,9 @@
 #include "application.h"
 
+constexpr float BUG_SPEED = 0.125f; 
+constexpr float EAGLE_SPEED = 0.15f; 
+
+
 static void glfwErrorCallback(int error, const char* description) {
 	fmt::println(stderr, "[GLFW Error {}]: {}", error, description);
 }
@@ -101,6 +105,7 @@ void Application::run() noexcept {
 		last_time = time;
 
 		m_world.step(delta_time);
+		aiStep();
 		m_physics.step(delta_time);
 		m_physics.handleCollisions(delta_time);
 		m_render.step(delta_time);
@@ -131,6 +136,56 @@ void Application::reset() noexcept {
 	m_render.reset();
 }
 
+void Application::aiStep() noexcept {
+
+	Entity player = m_registry->player();
+
+	glm::vec2& player_position = m_registry->m_positions.get(player);
+
+	const float EAGLE_EPSILON = 0.55f;
+
+	for(Entity e_npc : m_registry->m_eagles.entities){
+		glm::vec2& npc_position = m_registry->m_positions.get(e_npc);
+		glm::vec2& vel = m_registry->m_velocities.get(e_npc);
+	
+		glm::vec2 diff = player_position-npc_position;
+		float distance = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+
+		if(distance<EAGLE_EPSILON){
+			glm::vec2 dir = glm::normalize(diff);
+			vel = EAGLE_SPEED*dir;
+		} else {
+			vel.y = -EAGLE_SPEED;
+			vel.x = 0.f;
+		}
+
+		
+
+	}
+
+	const float BUG_EPSILON = 0.35f;
+
+	for(Entity b_npc : m_registry->m_bugs.entities){
+		glm::vec2& npc_position = m_registry->m_positions.get(b_npc);
+		glm::vec2& vel = m_registry->m_velocities.get(b_npc);
+	
+		glm::vec2 diff = player_position-npc_position;
+		float distance = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+
+		if(distance<BUG_EPSILON){
+			glm::vec2 dir = glm::normalize(diff);
+			vel = -BUG_SPEED*dir;
+		} else {
+			vel.y = -BUG_SPEED;
+			vel.x = 0.f;
+		}
+		
+	}
+
+	
+
+
+}
 void Application::onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept {
 	m_world.onKeyCallback(window, key, scancode, action, mods);
 }

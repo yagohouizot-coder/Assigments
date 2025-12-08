@@ -17,7 +17,7 @@ Registry* Registry::init() noexcept {
 	self->m_containers[9] = &self->m_collision_radius;
 
 	self->m_containers[10] = &self->m_colors;
-	// Added licht up timer 
+	// Added light up timer 
 	self->m_containers[11] = &self->m_light_up;
 	return self;
 }

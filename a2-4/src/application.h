@@ -34,6 +34,7 @@ class Application {
 
 		void reset() noexcept;
 
+		void aiStep() noexcept;
 		void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept;
 		void onResizeCallback(GLFWwindow* window, int width, int height) noexcept;
 
