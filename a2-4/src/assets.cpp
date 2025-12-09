@@ -23,6 +23,7 @@ static constexpr std::array<const char*, static_cast<size_t>(assets::Shader::cou
 	"sprite",
 	"wind",
 	"egg",
+	"line",	// added line shader
 };
 
 template<> std::string assets::getAssetPath<assets::Shader>(const assets::Shader asset_id) noexcept {

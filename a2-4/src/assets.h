@@ -21,6 +21,7 @@ enum struct Shader {
 	sprite,
 	wind,
 	egg,
+	line, // added line shader
 	count
 };
 

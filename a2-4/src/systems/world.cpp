@@ -156,6 +156,11 @@ void WorldSystem::onKeyCallback(GLFWwindow* /* window */, int key, int /* scanco
 					// Posted by ILMTitan
 					// Retrieved 2025-11-19, License - CC BY-SA 2.5
 					f4_pressed ^= true;
+					break;
+				case GLFW_KEY_F3:
+					f3_pressed ^= false;
+					m_registry->debugMode() = f3_pressed;
+					break;
 
 				default:
 					break;

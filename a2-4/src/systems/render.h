@@ -50,4 +50,15 @@ class RenderSystem {
 			glm::uvec2 m_origin;
 			glm::uvec2 m_size;
 		} m_viewport;
+
+		// ADDED FOR DEBUGGING TASK -> LINE RENDERING
+
+		GLuint m_line_vao;
+		GLuint m_line_vbo;
+		Shader m_line_shader;
+
+		struct DebuggingLines {
+			glm::vec2 m_position;
+			glm::vec3 m_color;
+		} ;
 };

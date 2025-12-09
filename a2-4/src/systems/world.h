@@ -40,5 +40,6 @@ class WorldSystem {
 		bool s_pressed = false;
 		bool d_pressed = false;
 		bool f4_pressed = true;
+		bool f3_pressed = false;
 };
 

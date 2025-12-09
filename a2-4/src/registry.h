@@ -38,9 +38,12 @@ class Registry {
 		inline Entity player() noexcept { return m_player; }
 		inline float& screenDarkness() noexcept { return m_screen_darkness; }
 
+		inline bool& debugMode() noexcept { return m_debug_mode; }
+
 	private:
 		std::array<ContainerInterface*, 11> m_containers;
 
 		Entity m_player;
 		float m_screen_darkness;
+		bool m_debug_mode = true;
 };

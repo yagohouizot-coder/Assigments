@@ -1,7 +1,7 @@
 #include "application.h"
 
 constexpr float BUG_SPEED = 0.125f; 
-constexpr float EAGLE_SPEED = 0.15f; 
+constexpr float EAGLE_SPEED = 0.1f; 
 
 
 static void glfwErrorCallback(int error, const char* description) {
