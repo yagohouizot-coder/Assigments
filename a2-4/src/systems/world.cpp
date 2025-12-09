@@ -158,7 +158,7 @@ void WorldSystem::onKeyCallback(GLFWwindow* /* window */, int key, int /* scanco
 					f4_pressed ^= true;
 					break;
 				case GLFW_KEY_F3:
-					f3_pressed ^= false;
+					f3_pressed = !f3_pressed;
 					m_registry->debugMode() = f3_pressed;
 					break;
 
