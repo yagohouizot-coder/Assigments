@@ -76,6 +76,8 @@ void WorldSystem::step(const float delta) noexcept {
 				} else if( player_velocity.x < 0 ) {
 					player_velocity.x = std::min(0.f, player_velocity.x + DECELERATION * delta);
 				}
+			} else {
+				player_velocity.x = 0.f;
 			}
 			
 		}
