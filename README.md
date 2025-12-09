@@ -16,6 +16,9 @@
 
   -   I'm also not sure if the wind implementation is correct as it doesn't ereally seem like wind, and sometimes more like a normal distortion    
 
+## Assignment 2 - Creative
+  - **Smart Prediction**: Implemented logic for Eagles and Bugs to predict the Chicken's position 0.1 seconds into the future based on its current velocity. This predicted position is used to determine their chasing or fleeing behavior, making them "smarter".
+
   # Questions
 
 ## Assignment 3

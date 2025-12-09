@@ -141,6 +141,10 @@ void Application::aiStep() noexcept {
 	Entity player = m_registry->player();
 
 	glm::vec2& player_position = m_registry->m_positions.get(player);
+	glm::vec2& player_velocity = m_registry->m_velocities.get(player);
+
+	// Predict player position 0.1s into the future
+	glm::vec2 predicted_position = player_position + player_velocity * 0.1f;
 
 	const float EAGLE_EPSILON = 0.55f;
 
@@ -148,7 +152,7 @@ void Application::aiStep() noexcept {
 		glm::vec2& npc_position = m_registry->m_positions.get(e_npc);
 		glm::vec2& vel = m_registry->m_velocities.get(e_npc);
 	
-		glm::vec2 diff = player_position-npc_position;
+		glm::vec2 diff = predicted_position-npc_position;
 		float distance = std::sqrt(diff.x * diff.x + diff.y * diff.y);
 
 		if(distance<EAGLE_EPSILON){
@@ -169,7 +173,7 @@ void Application::aiStep() noexcept {
 		glm::vec2& npc_position = m_registry->m_positions.get(b_npc);
 		glm::vec2& vel = m_registry->m_velocities.get(b_npc);
 	
-		glm::vec2 diff = player_position-npc_position;
+		glm::vec2 diff = predicted_position-npc_position;
 		float distance = std::sqrt(diff.x * diff.x + diff.y * diff.y);
 
 		if(distance<BUG_EPSILON){
