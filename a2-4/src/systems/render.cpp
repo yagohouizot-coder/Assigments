@@ -16,6 +16,7 @@ RenderSystem RenderSystem::init(Window* window, Registry* registry) noexcept {
 	self.m_sprite_shader = Shader::init(assets::Shader::sprite).value();
 	self.m_wind_shader = Shader::init(assets::Shader::wind).value();
 	self.m_egg_shader = Shader::init(assets::Shader::egg).value();
+	self.m_line_shader = Shader::init(assets::Shader::line).value();
 
 	self.m_eagle_texture = Texture::init(assets::Texture::eagle);
 	self.m_bug_texture = Texture::init(assets::Texture::bug);
@@ -46,6 +47,15 @@ RenderSystem RenderSystem::init(Window* window, Registry* registry) noexcept {
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(RenderSystem::Egg), (void*)(sizeof(float) * 3));
 
+	glGenVertexArrays(1, &self.m_line_vao);
+	glBindVertexArray(self.m_line_vao);
+	glGenBuffers(1, &self.m_line_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, self.m_line_vbo);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(RenderSystem::DebuggingLines), nullptr);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(RenderSystem::DebuggingLines), (void*)sizeof(glm::vec2));
+
 	return self;
 }
 
@@ -56,6 +66,10 @@ void RenderSystem::deinit() noexcept {
 	m_sprite_shader.deinit();
 	m_wind_shader.deinit();
 	m_egg_shader.deinit();
+	m_line_shader.deinit();
+
+	glDeleteBuffers(1, &m_line_vbo);
+	glDeleteVertexArrays(1, &m_line_vao);
 
 	m_eagle_texture.deinit();
 	m_bug_texture.deinit();
@@ -193,6 +207,47 @@ void RenderSystem::step(const float) noexcept {
 			.setInt("width", extent.x);
 
 		glDrawArrays(GL_POINTS, 0, count);
+	}
+
+	// draw lines for debugging
+	if (m_registry->debugMode()) {
+		const float EAGLE_EPSILON = 0.55f;
+		const float BUG_EPSILON = 0.35f;
+
+		std::vector<DebuggingLines> lines;
+		glm::vec2 player_pos = m_registry->m_positions.get(m_registry->player());
+
+		// Eagles
+		for (Entity eagle : m_registry->m_eagles.entities) {
+			glm::vec2 eagle_pos = m_registry->m_positions.get(eagle);
+			float dist = glm::distance(player_pos, eagle_pos);
+			glm::vec3 color = (dist < EAGLE_EPSILON) ? glm::vec3(1.0f, 0.0f, 0.0f) : glm::vec3(0.0f, 0.0f, 1.0f); // Red active, Blue inactive
+
+			lines.push_back({player_pos, color});
+			lines.push_back({eagle_pos, color});
+		}
+
+		// Bugs
+		for (Entity bug : m_registry->m_bugs.entities) {
+			glm::vec2 bug_pos = m_registry->m_positions.get(bug);
+			float dist = glm::distance(player_pos, bug_pos);
+			glm::vec3 color = (dist < BUG_EPSILON) ? glm::vec3(0.0f, 1.0f, 0.0f) : glm::vec3(1.0f, 1.0f, 0.0f); // Green active, Yellow inactive
+
+			lines.push_back({player_pos, color});
+			lines.push_back({bug_pos, color});
+		}
+
+		if (!lines.empty()) {
+			glBindVertexArray(m_line_vao);
+			glBindBuffer(GL_ARRAY_BUFFER, m_line_vbo);
+			glBufferData(GL_ARRAY_BUFFER, lines.size() * sizeof(DebuggingLines), lines.data(), GL_DYNAMIC_DRAW);
+
+			m_line_shader.use()
+				.setMat4("view", view)
+				.setMat4("projection", projection);
+
+			glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(lines.size()));
+		}
 	}
 
 	m_intermediate_framebuffer.unbind();
